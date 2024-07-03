@@ -1,0 +1,31 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the dataset
+data = pd.read_csv('path_to_global_temperature_data.csv')
+
+# Data Cleaning
+data['GlobalTemperature'] = data['GlobalTemperature'].fillna(data['GlobalTemperature'].mean())
+
+# Line Graph: Annual Global Temperatures
+plt.figure(figsize=(10, 5))
+plt.plot(data['Year'], data['GlobalTemperature'], label='Annual Global Temperature', color='blue')
+plt.xlabel('Year')
+plt.ylabel('Temperature (°C)')
+plt.title('Global Temperature Trends (1900-2020)')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Creating Decadal Data for Heat Map
+data['Decade'] = (data['Year'] // 10) * 10
+decadal_data = data.groupby('Decade').mean().reset_index()
+
+# Heat Map: Decadal Global Temperature Anomalies
+decade_temps = decadal_data.pivot('Decade', 'Year', 'GlobalTemperature')
+plt.figure(figsize=(12, 6))
+sns.heatmap(decade_temps, annot=True, cmap='coolwarm', cbar_kws={'label': 'Temperature (°C)'})
+plt.title('Decadal Global Temperature Anomalies')
+plt.show()
